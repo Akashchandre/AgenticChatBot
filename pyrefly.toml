@@ -1,0 +1,11 @@
+search-path = [
+    ".",
+    "src",
+    "venv/Lib/site-packages",
+]
+site-package-path = [
+    "venv/Lib/site-packages",
+]
+python-interpreter-path = "venv/Scripts/python.exe"
+infer-with-first-use = false
+disable-type-errors-in-ide = true
