@@ -1,5 +1,6 @@
-from src.langraphagenticai.UI.streamlit.display_result import DisplayResultStreamlit
+import os
 import streamlit as st
+from src.langraphagenticai.UI.streamlit.display_result import DisplayResultStreamlit
 from src.langraphagenticai.UI.streamlit.loadui import LoadUI
 from src.langraphagenticai.LLMS.groqllm import GroqLLM
 from src.langraphagenticai.graph.graph_builder import GraphBuilder
@@ -41,7 +42,6 @@ def load_langraph_agenticai_ui():
         return
 
     if user_input.get("TAVILY_API_KEY"):
-        import os
         os.environ["TAVILY_API_KEY"] = user_input["TAVILY_API_KEY"].strip()
 
     if usecase == "AI News":
