@@ -1,0 +1,10 @@
+# Daily AI News Summary
+
+### 2026-09-05
+- PwC projects global AI infrastructure spending will reach $31.6 trillion by 2050, with ICT equipment (chips) comprising 93% of investment; the US is expected to account for nearly half of this spend, while Asia Pacific contributes $8.2 trillion led by China and India. [Source](https://datacenters.economictimes.indiatimes.com/news/ai-compute-infrastructure/ai-capex-to-hit-31-6-trillion-by-2050-chips-overtake-concrete/133786417)
+- India’s AI data center expansion faces a critical talent bottleneck; while data center capacity is projected to rise from 1.4 GW to 8 GW by 2030, a shortage of specialized personnel for design, operation, and security could constrain growth alongside energy availability issues. [Source](https://www.firstpost.com/opinion/indias-ai-data-centre-ambition-meets-a-talent-bottleneck-14043409.html)
+- Global billionaire wealth hit a record $15.1 trillion in 2025, driven largely by the AI boom and rising technology valuations, with 29 individuals holding over $50 billion each accounting for 27% of the total. [Source](https://www.storyboard18.com/amp/trending/global-billionaire-wealth-hits-record-15-trillion-as-ai-boom-drives-gains-109816.htm)
+- Analysts warn that record outward remittances from India into overseas technology stocks may be masking an earnings bubble in the AI and semiconductor sectors, posing structural risks beneath current global market rallies. [Source](https://www.thehindubusinessline.com/multimedia/video/rising-global-bond-yields-and-the-looming-threat-of-ai-earnings-bubble/article71429366.ece)
+
+### 2026-09-04
+- The US and China are preparing for a mid-September dialogue on AI safety, occurring as Nvidia moves to acquire developer platform Hugging Face for $12.93 billion to support open AI models amid increasing competition from in-house chips. [Source](https://www.reuters.com/legal/litigation/us-china-gear-up-mid-september-ai-safety-dialogue-2026-09-04)

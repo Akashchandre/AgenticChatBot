@@ -44,24 +44,42 @@ def load_langraph_agenticai_ui():
         import os
         os.environ["TAVILY_API_KEY"] = user_input["TAVILY_API_KEY"].strip()
 
-    user_message = st.chat_input("Enter your message:")
+    if usecase == "AI News":
+        if st.session_state.get("IsFetchButtonClicked") or user_input.get("IsFetchButtonClicked"):
+            timeframe = st.session_state.get("timeframe") or user_input.get("timeframe") or "Daily"
+            if not model:
+                st.error("⚠️ Please enter your Groq API Key in the sidebar before fetching news.")
+                return
+            if not os.environ.get("TAVILY_API_KEY"):
+                st.error("⚠️ Please enter your Tavily API Key in the sidebar to fetch news.")
+                return
 
-    if user_message:
-        if not model:
-            st.error("⚠️ Please enter your Groq API Key in the sidebar before sending messages.")
-            return
+            graph_builder = GraphBuilder(model)
+            try:
+                graph = graph_builder.setup_graph(usecase)
+                DisplayResultStreamlit(usecase, graph, timeframe).display_result_on_ui()
+            except Exception as e:
+                st.error(f"Error: {e}")
+                return
+    else:
+        user_message = st.chat_input("Enter your message:")
 
-        if usecase in ["Chatbot With Web", "Chatbot with Web", "Chatbot with Tools"] and not user_input.get("TAVILY_API_KEY"):
-            st.error("⚠️ Please enter your Tavily API Key in the sidebar to use web search.")
-            return
+        if user_message:
+            if not model:
+                st.error("⚠️ Please enter your Groq API Key in the sidebar before sending messages.")
+                return
 
-        ## Graph Builder
-        graph_builder = GraphBuilder(model)
-        try:
-            graph = graph_builder.setup_graph(usecase)
-            DisplayResultStreamlit(usecase, graph, user_message).display_result_on_ui()
-        except Exception as e:
-            st.error(f"Error: {e}")
-            return
+            if usecase in ["Chatbot With Web", "Chatbot with Web", "Chatbot with Tools"] and not user_input.get("TAVILY_API_KEY"):
+                st.error("⚠️ Please enter your Tavily API Key in the sidebar to use web search.")
+                return
+
+            ## Graph Builder
+            graph_builder = GraphBuilder(model)
+            try:
+                graph = graph_builder.setup_graph(usecase)
+                DisplayResultStreamlit(usecase, graph, user_message).display_result_on_ui()
+            except Exception as e:
+                st.error(f"Error: {e}")
+                return
 
 
