@@ -16,8 +16,14 @@ class UIConfigFile:
     def get_llms_options(self):
         return [opt.strip() for opt in self.config.get('DEFAULT', 'LLMS_OPTIONS').split(',')]
 
+    def get_llm_options(self):
+        return self.get_llms_options()
+
     def get_use_case_options(self):
         return [opt.strip() for opt in self.config.get('DEFAULT', 'USE_CASE_OPTIONS').split(',')]
+
+    def get_usecase_options(self):
+        return self.get_use_case_options()
 
     def get_groq_model_options(self):
         return [opt.strip() for opt in self.config.get('DEFAULT', 'GROQ_MODEL_OPTIONS').split(',')]
