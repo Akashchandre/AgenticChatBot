@@ -18,12 +18,18 @@ class LoadStreamlitUI:
 
         # Support pre-filling from Streamlit Secrets or Environment Variables
         default_groq_key = os.environ.get("GROQ_API_KEY", "")
-        if not default_groq_key and hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
-            default_groq_key = str(st.secrets["GROQ_API_KEY"])
-
         default_tavily_key = os.environ.get("TAVILY_API_KEY", "")
-        if not default_tavily_key and hasattr(st, "secrets") and "TAVILY_API_KEY" in st.secrets:
-            default_tavily_key = str(st.secrets["TAVILY_API_KEY"])
+        try:
+            if not default_groq_key and hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
+                default_groq_key = str(st.secrets["GROQ_API_KEY"])
+        except Exception:
+            pass
+
+        try:
+            if not default_tavily_key and hasattr(st, "secrets") and "TAVILY_API_KEY" in st.secrets:
+                default_tavily_key = str(st.secrets["TAVILY_API_KEY"])
+        except Exception:
+            pass
 
         with st.sidebar:
             # Get options from config
@@ -34,17 +40,6 @@ class LoadStreamlitUI:
             self.user_controls["selected_llm"] = st.selectbox("Select LLM", llm_options)
 
             if self.user_controls["selected_llm"] == 'Groq':
-                # Model selection - only verified, working models from config
-                model_options = self.config.get_groq_model_options()
-                
-                selected_model = st.selectbox(
-                    "Select Model",
-                    model_options,
-                    index=0,
-                    key="groq_model_select"
-                )
-                self.user_controls["selected_groq_model"] = selected_model
-
                 groq_key_input = st.text_input(
                     "API Key",
                     value=st.session_state.get("GROQ_API_KEY", default_groq_key),
@@ -56,6 +51,50 @@ class LoadStreamlitUI:
                 # Validate API key
                 if not self.user_controls["GROQ_API_KEY"]:
                     st.warning("⚠️ Please enter your GROQ API key to proceed. Don't have? refer : https://console.groq.com/keys ")
+
+                # Model selection - default to curated lightweight free models
+                model_options = self.config.get_groq_model_options()
+
+                # Dynamically fetch available chat models for this specific API key if provided
+                clean_key = groq_key_input.strip().strip("'\"") if isinstance(groq_key_input, str) else ""
+                if clean_key:
+                    try:
+                        from groq import Groq
+                        client = Groq(api_key=clean_key)
+                        live_models = [
+                            m.id for m in client.models.list().data
+                            if not any(x in m.id.lower() for x in [
+                                'whisper', 'embed', 'guard', 'safeguard', 'orpheus', 'tts', 'audio', 'distil'
+                            ])
+                        ]
+                        if live_models:
+                            # Prioritize lightweight, fast, free chat models
+                            preferred = [
+                                "openai/gpt-oss-20b",
+                                "qwen/qwen3.8-27b",
+                                "qwen/qwen3.6-27b",
+                                "groq/compound-mini",
+                                "openai/gpt-oss-120b",
+                            ]
+                            sorted_models = [m for m in preferred if m in live_models] + [
+                                m for m in live_models if m not in preferred
+                            ]
+                            if sorted_models:
+                                model_options = sorted_models
+                    except Exception:
+                        pass
+
+                # Preserve selection so it NEVER auto-changes on rerun
+                prev_selected = st.session_state.get("selected_groq_model_state", model_options[0])
+                model_index = model_options.index(prev_selected) if prev_selected in model_options else 0
+
+                selected_model = st.selectbox(
+                    "Select Model",
+                    model_options,
+                    index=model_index,
+                    key="selected_groq_model_state"
+                )
+                self.user_controls["selected_groq_model"] = selected_model
             
             ## USecase selection
             self.user_controls["selected_usecase"] = st.selectbox("Select Usecases", usecase_options)
@@ -63,7 +102,7 @@ class LoadStreamlitUI:
             if self.user_controls["selected_usecase"] in ["Chatbot With Web", "Chatbot with Web", "AI News"]:
                 selected_model = self.user_controls.get("selected_groq_model", "")
                 if any(x in selected_model.lower() for x in ['allam', 'deepseek', 'gemma']):
-                    st.warning(f"⚠️ Model `{selected_model}` does not support tool calling. Please choose **llama-3.3-70b-versatile** or **llama-3.1-8b-instant** for web search / AI news.")
+                    st.warning(f"⚠️ Model `{selected_model}` does not support tool calling. Please choose **openai/gpt-oss-20b** or **qwen/qwen3.8-27b** for web search / AI news.")
 
                 tavily_key_input = st.text_input(
                     "TAVILY API KEY",

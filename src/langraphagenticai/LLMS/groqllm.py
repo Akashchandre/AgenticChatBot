@@ -15,8 +15,12 @@ class GroqLLM:
 
         if not groq_api_key:
             groq_api_key = os.environ.get("GROQ_API_KEY", "")
-        if not groq_api_key and hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
-            groq_api_key = str(st.secrets["GROQ_API_KEY"]).strip().strip("'\"")
+        if not groq_api_key:
+            try:
+                if hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
+                    groq_api_key = str(st.secrets["GROQ_API_KEY"]).strip().strip("'\"")
+            except Exception:
+                pass
 
         selected_groq_model = self.user_controls_input.get("selected_groq_model", "")
         if isinstance(selected_groq_model, str):
